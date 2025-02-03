@@ -5,6 +5,7 @@
 
 namespace mode
 {
+    // Enumerazioni
     enum MODE
     {
         SINGLE,
@@ -30,11 +31,12 @@ namespace mode
         NULL_SETPOINT
     };
 
+    // Funzioni di conversione da stringa
     MODE stringToMode(const char *str);
     SETPOINTTYPE stringToSetPoint(const char *str);
     CURVE stringToCurve(const char *str);
 
-
+    // Classe per la modalità Sweep
     class SweepMode{
     public:
         SweepMode();
@@ -48,9 +50,14 @@ namespace mode
         CURVE getCurve();
         void setCurve(CURVE curve);
         void setCurve(const char *curve);
+
+    private:
+        int initial_dc;
+        int final_dc;
+        CURVE curve;
     };
 
-
+    // Classe per la modalità SetPoint
     class SetPointMode{
     public:
         SetPointMode();
@@ -61,25 +68,30 @@ namespace mode
         SETPOINTTYPE getSetPoint();
         void setSetPoint(SETPOINTTYPE setpoint);
         void setSetPoint(const char *setpoint);
+
+    private:
+        SETPOINTTYPE setpoint;
+        float value;
     };
 
+    // Classe per la modalità Single Speed
     class SingleSpeedMode{
     public:
         SingleSpeedMode();
 
         float getDutyCycle();
-
-        void setSpeed(int speed);
         void setDutyCycle(float duty_cycle);
+        void setSpeed(int speed);  // Aggiunta la funzione mancante
+
+    private:
+        float duty_cycle;
     };
 
-
+    // Variabili globali
     extern MODE currentMode;
-
     extern SweepMode globalSweepMode;
     extern SetPointMode globalSetPointMode;
     extern SingleSpeedMode globalSingleSpeedMode;
-
 }
 
-#endif
+#endif // MODE_H

@@ -1,157 +1,150 @@
 #include <Arduino.h>
-#include <header/mode.h>
+#include "header/mode.h"
 
-using namespace mode;
+namespace mode {
 
-mode::MODE stringToMode(const char *str)
-{
-    if (strcmp(str, "SINGLE") == 0)
-        return SINGLE;
-    if (strcmp(str, "SWEEP") == 0)
-        return SWEEP;
-    if (strcmp(str, "SETPOINT") == 0)
-        return SETPOINT;
-    return NULL_MODE;
-}
-
-mode::SETPOINTTYPE stringToSetPoint(const char *str)
-{
-    if (strcmp(str, "DUTY") == 0)
-        return DUTY;
-    if (strcmp(str, "RPM") == 0)
-        return RPM;
-    if (strcmp(str, "POWER") == 0)
-        return POWER;
-    if (strcmp(str, "THRUST") == 0)
-        return THRUST;
-    return NULL_SETPOINT;
-}
-
-MODE currentMode = MODE::NULL_MODE;
-
-mode::CURVE stringToCurve(const char *str)
-{
-    if (strcmp(str, "RAMP") == 0)
-        return RAMP;
-    if (strcmp(str, "STEPS") == 0)
-        return STEPS;
-    if (strcmp(str, "GENERIC") == 0)
-        return GENERIC;
-    return NULL_CURVE;
-}
-
-class mode::SweepMode
-{
-public:
-    SweepMode()
+    // Funzioni di conversione da stringa
+    MODE stringToMode(const char *str)
     {
-        initial_dc = 0;
-        final_dc = 0;
-        curve = CURVE::NULL_CURVE;
+        if (strcmp(str, "SINGLE") == 0)
+            return SINGLE;
+        if (strcmp(str, "SWEEP") == 0)
+            return SWEEP;
+        if (strcmp(str, "SETPOINT") == 0)
+            return SETPOINT;
+        return NULL_MODE;
     }
 
-    int getInitialDC()
+    SETPOINTTYPE stringToSetPoint(const char *str)
+    {
+        if (strcmp(str, "DUTY") == 0)
+            return DUTY;
+        if (strcmp(str, "RPM") == 0)
+            return RPM;
+        if (strcmp(str, "POWER") == 0)
+            return POWER;
+        if (strcmp(str, "THRUST") == 0)
+            return THRUST;
+        return NULL_SETPOINT;
+    }
+
+    CURVE stringToCurve(const char *str)
+    {
+        if (strcmp(str, "RAMP") == 0)
+            return RAMP;
+        if (strcmp(str, "STEPS") == 0)
+            return STEPS;
+        if (strcmp(str, "GENERIC") == 0)
+            return GENERIC;
+        return NULL_CURVE;
+    }
+
+    // -------------------------
+    // Implementazione di SweepMode
+    // -------------------------
+    SweepMode::SweepMode()
+        : initial_dc(0), final_dc(0), curve(NULL_CURVE)
+    {
+    }
+
+    int SweepMode::getInitialDC()
     {
         return initial_dc;
     }
 
-    void setInitialDC(int initial_dc)
+    void SweepMode::setInitialDC(int initial_dc)
     {
         this->initial_dc = initial_dc;
     }
 
-    int getFinalDC()
+    int SweepMode::getFinalDC()
     {
         return final_dc;
     }
 
-    void setFinalDC(int final_dc)
+    void SweepMode::setFinalDC(int final_dc)
     {
         this->final_dc = final_dc;
     }
 
-    CURVE getCurve()
+    CURVE SweepMode::getCurve()
     {
         return curve;
     }
 
-    void setCurve(CURVE curve)
+    void SweepMode::setCurve(CURVE curve)
     {
         this->curve = curve;
     }
 
-    void setCurve(const char *curve)
+    void SweepMode::setCurve(const char *curveStr)
     {
-        this->curve = mode::stringToCurve(curve);
+        this->curve = stringToCurve(curveStr);
     }
 
-private:
-    int initial_dc;
-    int final_dc;
-    enum CURVE curve;
-};
-
-class mode::SetPointMode
-{
-public:
-    SetPointMode()
+    // -------------------------
+    // Implementazione di SetPointMode
+    // -------------------------
+    SetPointMode::SetPointMode()
+        : setpoint(NULL_SETPOINT), value(0.0f)
     {
-        setpoint = SETPOINTTYPE::NULL_SETPOINT;
-        value = 0;
     }
 
-    SETPOINTTYPE getSetPoint()
+    SETPOINTTYPE SetPointMode::getSetPoint()
     {
         return setpoint;
     }
 
-    void setSetPoint(SETPOINTTYPE setpoint)
+    void SetPointMode::setSetPoint(SETPOINTTYPE setpoint)
     {
         this->setpoint = setpoint;
     }
 
-    void setSetPoint(const char *setpoint)
+    void SetPointMode::setSetPoint(const char *setpointStr)
     {
-        this->setpoint = mode::stringToSetPoint(setpoint);
+        this->setpoint = stringToSetPoint(setpointStr);
     }
 
-    float getValue()
+    float SetPointMode::getValue()
     {
         return value;
     }
 
-    void setValue(float value)
+    void SetPointMode::setValue(float value)
     {
         this->value = value;
     }
 
-private:
-    enum SETPOINTTYPE setpoint;
-    float value;
-};
-
-class mode::SingleSpeedMode
-{
-public:
-    SingleSpeedMode()
+    // -------------------------
+    // Implementazione di SingleSpeedMode
+    // -------------------------
+    SingleSpeedMode::SingleSpeedMode()
+        : duty_cycle(0.0f)
     {
-        duty_cycle = 0;
     }
 
-    float getDutyCycle()
+    float SingleSpeedMode::getDutyCycle()
     {
         return duty_cycle;
     }
 
-    void setDutyCycle(float duty_cycle)
+    void SingleSpeedMode::setDutyCycle(float duty_cycle)
     {
         this->duty_cycle = duty_cycle;
     }
 
-private:
-    float duty_cycle;
-};
+    void SingleSpeedMode::setSpeed(int speed)
+    {
+        // Esempio: conversione da "speed" ad una duty cycle (da adattare alle necessità)
+        this->duty_cycle = static_cast<float>(speed) / 100.0f;
+    }
 
-SweepMode globalSweepMode = SweepMode();
-SetPointMode globalSetPointMode = SetPointMode();
-SingleSpeedMode globalSingleSpeedMode = SingleSpeedMode();
+    // -------------------------
+    // Definizione delle variabili globali
+    // -------------------------
+    MODE currentMode = NULL_MODE;
+    SweepMode globalSweepMode;
+    SetPointMode globalSetPointMode;
+    SingleSpeedMode globalSingleSpeedMode;
+
+} // namespace mode
