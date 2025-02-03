@@ -1,47 +1,31 @@
 #include <Arduino.h>
 #include <header/parser.h>
 #include <header/mode.h>
+#include <header/code_parser.h>
 
 using namespace mode;
+using namespace code_parser;
 
 
-void start(char *optional);
-bool substring(char *original, char *header, char *body);
+void start(String& optional);
+bool substring(String& original, String& header, String& body);
 
-enum CODE
-{
-  START,
-  STOP,
-  DATA,
-  NULL_CODE
-};
-
-CODE stringToCode(const char *str)
-{
-  if (strcmp(str, "START") == 0)
-    return START;
-  if (strcmp(str, "STOP") == 0)
-    return STOP;
-  if (strcmp(str, "DATA") == 0)
-    return DATA;
-  return NULL_CODE;
-}
-
-
-char curve_in[10];
+String curve_in;
 
 enum CODE code;
-char code_in[5];
+String code_in;
 
-char params[90];
+String params;
 
-char mode_in[10];
+String mode_in;
 
 float duration;
 float sampling_period;
 
+String inputString;
 
-char temp_string[10];
+
+String temp_string;
 
 void setup()
 {
@@ -54,11 +38,9 @@ void setup()
 void loop()
 {
 
-  char inputString[100];
   if (Serial.available())
   {
-    int len = Serial.readBytesUntil('\n', inputString, sizeof(inputString) - 1);
-    inputString[len] = '\0';
+    inputString = Serial.readStringUntil('\n');
     Serial.print("Hai inserito: ");
     Serial.println(inputString);
 
@@ -67,15 +49,13 @@ void loop()
       code = stringToCode(code_in);
       Serial.print("Code: ");
       Serial.println(code_in);
-      Serial.print("params: ");
-      Serial.println(params);
+
       if (code == CODE::START)
       {
         start(params);
       }
       else if (code == CODE::STOP)
       {
-        // handle the stop command (stop everything)
         return;
       }
     }
@@ -86,55 +66,64 @@ void loop()
   }
 }
 
-void start(char *optional)
+void start(String& optional)
 {
-  Serial.print("Code: START ");
-  Serial.println(optional);
   if (substring(optional, mode_in, params))
   {
-#define MODE
+    // define MODE
     mode::currentMode = stringToMode(mode_in);
     Serial.print("Mode: ");
     Serial.println(mode_in);
 
-#define DURATION
+    // define DURATION
     substring(params, temp_string, params);
-    duration = atof(temp_string);
+    duration = temp_string.toFloat();
     Serial.print("Duration: ");
     Serial.println(duration);
 
-#define SAMPLING_PERIOD
+    // define SAMPLING_PERIOD
     substring(params, temp_string, params);
-    sampling_period = atof(temp_string);
+    sampling_period = temp_string.toFloat();
     Serial.print("Sampling Period: ");
     Serial.println(sampling_period);
 
     if (mode::currentMode == MODE::SINGLE)
     {
-      substring(params, temp_string, params);
-      globalSingleSpeedMode.setDutyCycle(atof(temp_string));
+      globalSingleSpeedMode.setDutyCycle(params.toFloat());
       Serial.print("Duty Cycle: ");
       Serial.println(globalSingleSpeedMode.getDutyCycle());
+
+      globalSingleSpeedMode.getParams();
     }
     else if (mode::currentMode == MODE::SWEEP)
     {
-#define INITIAL_DC
+      // define INITIAL_DC
       substring(params, temp_string, params);
-      globalSweepMode.setInitialDC(atoi(temp_string));
+      globalSweepMode.setInitialDC(temp_string.toInt());
       Serial.print("Initial Duty Cycle: ");
       Serial.println(globalSweepMode.getInitialDC());
 
-#define FINAL_DC
+      // define FINAL_DC
       substring(params, temp_string, params);
-      globalSweepMode.setFinalDC(atoi(temp_string));
+      globalSweepMode.setFinalDC(temp_string.toInt());
       Serial.print("Final Duty Cycle: ");
       Serial.println(globalSweepMode.getFinalDC());
 
-#define CURVE
-      substring(params, curve_in, params);
-      globalSweepMode.setCurve(curve_in);
+      // define CURVE
+      substring(params, temp_string, params);
+      globalSweepMode.setCurve(temp_string);
       Serial.print("Curve: ");
-      Serial.println(curve_in);
+      Serial.println(temp_string);
+
+      if(globalSweepMode.getCurve() == CURVE::STEPS){
+        // define N_STEPS
+        globalSweepMode.setNSteps(params.toInt());
+        Serial.print("Number of Steps: ");
+        Serial.println(globalSweepMode.getNSteps());
+      }
+
+
+      globalSweepMode.getParams();
     }
     else if (mode::currentMode == MODE::SETPOINT)
     {
@@ -143,10 +132,11 @@ void start(char *optional)
       Serial.print("Setpoint: ");
       Serial.println(temp_string);
 
-      substring(params, temp_string, params);
-      globalSetPointMode.setValue(atof(temp_string));
+      globalSetPointMode.setValue(params.toFloat());
       Serial.print("Value: ");
       Serial.println(globalSetPointMode.getValue());
+
+      globalSetPointMode.getParams();
     }
   }
   else
@@ -155,9 +145,16 @@ void start(char *optional)
   }
 }
 
-bool substring(char *original, char *header, char *body)
-{
-  if (sscanf(original, "%[^;];%[^.*]", header, body))
+bool substring(String& original, String& header, String& body) {
+    int separatorIndex = original.indexOf(';');
+
+    if ( original.indexOf(';') == -1) {
+        header = original;
+        body = "";
+        return false;  
+    }
+
+    header = original.substring(0, separatorIndex);               
+    body = original.substring(separatorIndex + 1);                 
     return true;
-  return false;
 }

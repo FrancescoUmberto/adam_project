@@ -30,9 +30,9 @@ namespace mode
         NULL_SETPOINT
     };
 
-    MODE stringToMode(const char *str);
-    SETPOINTTYPE stringToSetPoint(const char *str);
-    CURVE stringToCurve(const char *str);
+    MODE stringToMode(const String& str);
+    SETPOINTTYPE stringToSetPoint(const String& str);
+    CURVE stringToCurve(const String& str);
 
     class SweepMode{
     public:
@@ -44,13 +44,19 @@ namespace mode
         int getFinalDC();
         void setFinalDC(int final_dc);
 
+        int getNSteps();
+        void setNSteps(int n_steps);
+
         CURVE getCurve();
         void setCurve(CURVE curve);
-        void setCurve(const char *curve);
+        void setCurve(const String& curve);
+
+        void getParams();
 
     private:
         int initial_dc;
         int final_dc;
+        int n_steps;
         CURVE curve;
     };
 
@@ -63,7 +69,9 @@ namespace mode
 
         SETPOINTTYPE getSetPoint();
         void setSetPoint(SETPOINTTYPE setpoint);
-        void setSetPoint(const char *setpoint);
+        void setSetPoint(const String& setpoint);
+
+        void getParams();
 
     private:
         SETPOINTTYPE setpoint;
@@ -76,6 +84,9 @@ namespace mode
 
         float getDutyCycle();
         void setDutyCycle(float duty_cycle);
+
+        void getParams();
+
     private:
         float duty_cycle;
     };

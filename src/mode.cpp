@@ -3,38 +3,30 @@
 
 namespace mode {
 
-    MODE stringToMode(const char *str)
+    MODE stringToMode(const String& str)
     {
-        if (strcmp(str, "SINGLE") == 0)
-            return SINGLE;
-        if (strcmp(str, "SWEEP") == 0)
-            return SWEEP;
-        if (strcmp(str, "SETPOINT") == 0)
-            return SETPOINT;
+        if (str.equals("SINGLE")) return SINGLE;
+        if (str.equals("SWEEP")) return SWEEP;
+        if (str.equals("SETPOINT")) return SETPOINT;
         return NULL_MODE;
     }
 
-    SETPOINTTYPE stringToSetPoint(const char *str)
+    SETPOINTTYPE stringToSetPoint(const String& str)
     {
-        if (strcmp(str, "DUTY") == 0)
-            return DUTY;
-        if (strcmp(str, "RPM") == 0)
-            return RPM;
-        if (strcmp(str, "POWER") == 0)
-            return POWER;
-        if (strcmp(str, "THRUST") == 0)
-            return THRUST;
+        if (str.equals("DUTY")) return DUTY;
+        if (str.equals("RPM")) return RPM;
+        if (str.equals("POWER")) return POWER;
+        if (str.equals("THRUST")) return THRUST;
         return NULL_SETPOINT;
     }
 
-    CURVE stringToCurve(const char *str)
+    CURVE stringToCurve(const String& str)
     {
-        if (strcmp(str, "RAMP") == 0)
-            return RAMP;
-        if (strcmp(str, "STEPS") == 0)
-            return STEPS;
+        if (str.equals("RAMP")) return RAMP;
+        if (str.equals("STEPS")) return STEPS;
         return NULL_CURVE;
     }
+
 
 
     SweepMode::SweepMode()
@@ -62,6 +54,16 @@ namespace mode {
         this->final_dc = final_dc;
     }
 
+    int SweepMode::getNSteps()
+    {
+        return n_steps;
+    }
+
+    void SweepMode::setNSteps(int n_steps)
+    {
+        this->n_steps = n_steps;
+    }
+
     CURVE SweepMode::getCurve()
     {
         return curve;
@@ -72,10 +74,29 @@ namespace mode {
         this->curve = curve;
     }
 
-    void SweepMode::setCurve(const char *curveStr)
+    void SweepMode::setCurve(const String& curveStr)
     {
         this->curve = stringToCurve(curveStr);
     }
+
+    void SweepMode::getParams()
+    {
+        Serial.println("----------------------------");
+        Serial.println("Sweep Mode Parameters: ");
+        Serial.print("Initial Duty Cycle: ");
+        Serial.println(initial_dc);
+        Serial.print("Final Duty Cycle: ");
+        Serial.println(final_dc);
+        Serial.print("Curve: ");
+        Serial.println(curve);
+        if (curve == STEPS)
+        {
+            Serial.print("Number of Steps: ");
+            Serial.println(n_steps);
+        }
+        Serial.println("----------------------------");
+    }
+
 
     SetPointMode::SetPointMode()
         : setpoint(NULL_SETPOINT), value(0.0f)
@@ -92,7 +113,7 @@ namespace mode {
         this->setpoint = setpoint;
     }
 
-    void SetPointMode::setSetPoint(const char *setpointStr)
+    void SetPointMode::setSetPoint(const String& setpointStr)
     {
         this->setpoint = stringToSetPoint(setpointStr);
     }
@@ -106,6 +127,20 @@ namespace mode {
     {
         this->value = value;
     }
+
+    void SetPointMode::getParams()
+    {
+        Serial.println("----------------------------");
+        Serial.println("Set Point Mode Parameters: ");
+        Serial.print("Set Point: ");
+        Serial.println(setpoint);
+        Serial.print("Value: ");
+        Serial.println(value);
+        Serial.println("----------------------------");
+    }
+
+
+
 
 
     SingleSpeedMode::SingleSpeedMode()
@@ -121,6 +156,15 @@ namespace mode {
     void SingleSpeedMode::setDutyCycle(float duty_cycle)
     {
         this->duty_cycle = duty_cycle;
+    }
+
+    void SingleSpeedMode::getParams()
+    {
+        Serial.println("----------------------------");
+        Serial.println("Single Speed Mode Parameters: ");
+        Serial.print("Duty Cycle: ");
+        Serial.println(duty_cycle);
+        Serial.println("----------------------------");
     }
 
 
