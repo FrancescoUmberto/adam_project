@@ -18,7 +18,6 @@ namespace mode
     {
         RAMP,
         STEPS,
-        GENERIC,
         NULL_CURVE
     };
 
@@ -31,12 +30,10 @@ namespace mode
         NULL_SETPOINT
     };
 
-    // Funzioni di conversione da stringa
     MODE stringToMode(const char *str);
     SETPOINTTYPE stringToSetPoint(const char *str);
     CURVE stringToCurve(const char *str);
 
-    // Classe per la modalità Sweep
     class SweepMode{
     public:
         SweepMode();
@@ -57,7 +54,6 @@ namespace mode
         CURVE curve;
     };
 
-    // Classe per la modalità SetPoint
     class SetPointMode{
     public:
         SetPointMode();
@@ -74,20 +70,16 @@ namespace mode
         float value;
     };
 
-    // Classe per la modalità Single Speed
     class SingleSpeedMode{
     public:
         SingleSpeedMode();
 
         float getDutyCycle();
         void setDutyCycle(float duty_cycle);
-        void setSpeed(int speed);  // Aggiunta la funzione mancante
-
     private:
         float duty_cycle;
     };
 
-    // Variabili globali
     extern MODE currentMode;
     extern SweepMode globalSweepMode;
     extern SetPointMode globalSetPointMode;

@@ -3,7 +3,6 @@
 
 namespace mode {
 
-    // Funzioni di conversione da stringa
     MODE stringToMode(const char *str)
     {
         if (strcmp(str, "SINGLE") == 0)
@@ -34,14 +33,10 @@ namespace mode {
             return RAMP;
         if (strcmp(str, "STEPS") == 0)
             return STEPS;
-        if (strcmp(str, "GENERIC") == 0)
-            return GENERIC;
         return NULL_CURVE;
     }
 
-    // -------------------------
-    // Implementazione di SweepMode
-    // -------------------------
+
     SweepMode::SweepMode()
         : initial_dc(0), final_dc(0), curve(NULL_CURVE)
     {
@@ -82,9 +77,6 @@ namespace mode {
         this->curve = stringToCurve(curveStr);
     }
 
-    // -------------------------
-    // Implementazione di SetPointMode
-    // -------------------------
     SetPointMode::SetPointMode()
         : setpoint(NULL_SETPOINT), value(0.0f)
     {
@@ -115,9 +107,7 @@ namespace mode {
         this->value = value;
     }
 
-    // -------------------------
-    // Implementazione di SingleSpeedMode
-    // -------------------------
+
     SingleSpeedMode::SingleSpeedMode()
         : duty_cycle(0.0f)
     {
@@ -133,18 +123,10 @@ namespace mode {
         this->duty_cycle = duty_cycle;
     }
 
-    void SingleSpeedMode::setSpeed(int speed)
-    {
-        // Esempio: conversione da "speed" ad una duty cycle (da adattare alle necessità)
-        this->duty_cycle = static_cast<float>(speed) / 100.0f;
-    }
 
-    // -------------------------
-    // Definizione delle variabili globali
-    // -------------------------
     MODE currentMode = NULL_MODE;
     SweepMode globalSweepMode;
     SetPointMode globalSetPointMode;
     SingleSpeedMode globalSingleSpeedMode;
 
-} // namespace mode
+}
