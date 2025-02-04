@@ -3,9 +3,22 @@
 
 namespace send_data{
 
+    char* p;
+
+    inline void appendFloat(float value) {
+        dtostrf(value, 6, 4, p);
+        p += strlen(p);
+        *p++ = ';';
+    }
+
     Data::Data()
         : current(0), voltage(0), temperature(0), rpm(0), thrust(0), noise(0)
     {
+        buffer[0] = 'D';
+        buffer[1] = 'A';
+        buffer[2] = 'T';
+        buffer[3] = 'A';
+        buffer[4] = ';';
     }
 
     float Data::getCurrent()
@@ -68,13 +81,23 @@ namespace send_data{
         this->noise = noise;
     }
 
-    void Data::sendData()
-    {
-    snprintf(buffer, sizeof(buffer), "DATA;%.4f;%.4f;%.4f;%.4f;%.4f;%.4f", 
-            current, voltage, temperature, rpm, thrust, noise);
+    void Data::sendData() {
+    p = buffer + 5;
+
+    appendFloat(current);
+    appendFloat(voltage);
+    appendFloat(temperature);
+    appendFloat(rpm);
+    appendFloat(thrust);
+
+    dtostrf(noise, 6, 4, p);
+    // p += strlen(p);
+    // *p = '\0';
+
+    Serial.println(buffer);
+}
+
     
-    Serial.println(buffer); // Invia l'intera stringa in una sola operazione
-    }
 
     Data globalData = Data();
 

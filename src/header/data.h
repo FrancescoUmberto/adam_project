@@ -35,7 +35,7 @@ namespace send_data{
         float rpm;
         float thrust;
         float noise;
-        char buffer[100];
+        char buffer[128];
     };
 
     extern Data globalData;
