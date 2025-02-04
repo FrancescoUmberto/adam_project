@@ -3,15 +3,15 @@
 #include <header/mode.h>
 #include <header/code_parser.h>
 #include <header/utils.h>
+#include <header/data.h>
 
 using namespace parser;
 using namespace mode;
 using namespace code_parser;
 using namespace utils;
+using namespace send_data;
 
 String curve_in;
-
-enum CODE code;
 String code_in;
 String inputString;
 bool flag;
@@ -43,8 +43,8 @@ ISR(TIMER1_COMPA_vect) {
 
 void loop()
 {
-  if(flag){
-    globalSingleSpeedMode.getParams();
+  if(flag && currentCode == CODE::START){
+    globalData.sendData();
     flag = false;
   }
 
@@ -56,17 +56,14 @@ void loop()
 
     if (substring(inputString, code_in, params))
     {
-      code = stringToCode(code_in);
-      Serial.print("Code: ");
-      Serial.println(code_in);
-
-      if (code == CODE::START)
+      currentCode = stringToCode(code_in);
+      if (currentCode == CODE::START)
       {
         cli();
         parse_command(params);
         sei();
       }
-      else if (code == CODE::STOP)
+      else if (currentCode == CODE::STOP)
       {
         return;
       }
