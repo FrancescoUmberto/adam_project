@@ -70,7 +70,7 @@ namespace send_data{
 
     void Data::sendData()
     {
-    snprintf(buffer, sizeof(buffer), "DATA,%1f,%1f,%1f,%f,%.f,%f", 
+    snprintf(buffer, sizeof(buffer), "DATA;%.4f;%.4f;%.4f;%.4f;%.4f;%.4f", 
             current, voltage, temperature, rpm, thrust, noise);
     
     Serial.println(buffer); // Invia l'intera stringa in una sola operazione
