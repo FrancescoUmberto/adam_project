@@ -18,7 +18,6 @@ float sampling_period;
 
     void parse_command(String &optional)
     {
-        cli();
         if (substring(optional, mode_in, params))
         {
             // define MODE
@@ -93,7 +92,6 @@ float sampling_period;
             OCR1A = (16000000UL / (1024UL * sampling_period)) - 1;
 
 ;
-            sei();
         }
         else
         {

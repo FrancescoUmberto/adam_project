@@ -20,22 +20,19 @@ void setup()
 {
   cli();  // Disabilita gli interrupt globali
 
-  Serial.begin(230400);
-  Serial.println("Inserire il codice di comando per impostare la frequenza (Hz): ");
+  Serial.begin(250000);
+  Serial.setTimeout(100);
+  Serial.println("Inserire il codice di comando: ");
 
-  // Configurazione di Timer1 in modalità CTC
   TCCR1A = 0;
-  // Modalità CTC e prescaler = 1024 (CS12=1 e CS10=1)
   TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
   
-  // Calcola OCR1A per la frequenza iniziale:
   // OCR1A = (16e6 / (1024 * desiredFrequency)) - 1
   OCR1A = (16000000UL / (1024UL)) - 1;
   
-  // Abilita l'interrupt per il confronto A del Timer1
   TIMSK1 = (1 << OCIE1A);
 
-  sei();  // Riabilita gli interrupt globali 
+  sei(); 
 
 }
 
@@ -47,7 +44,7 @@ ISR(TIMER1_COMPA_vect) {
 void loop()
 {
   if(flag){
-    Serial.println("Manca tutto");
+    globalSingleSpeedMode.getParams();
     flag = false;
   }
 
@@ -65,7 +62,9 @@ void loop()
 
       if (code == CODE::START)
       {
+        cli();
         parse_command(params);
+        sei();
       }
       else if (code == CODE::STOP)
       {
@@ -77,6 +76,4 @@ void loop()
       Serial.println("Parsing Error");
     }
   }
-
-  
 }
