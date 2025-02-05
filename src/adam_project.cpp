@@ -6,6 +6,7 @@
 #include <header/data.h>
 #include <header/engine.h>
 #include <header/pin.h>
+#include <header/microphone.h>
 
 
 using namespace parser;
@@ -15,6 +16,7 @@ using namespace utils;
 using namespace send_data;
 using namespace engine;
 using namespace pin;
+using namespace microphone;
 
 String curve_in;
 String code_in;
@@ -40,6 +42,7 @@ void setup()
   TIMSK1 = (1 << OCIE1A);
 
   sei(); 
+  pinMode(MICROPHONE_PIN, INPUT); // Set the signal pin as input
 
 }
 
@@ -81,6 +84,10 @@ void loop()
     {
       Serial.println("Parsing Error");
     }
+  }
+  
+  if(currentCode == CODE::START){
+    processAudioSample();
   }
 
   //controlEngine();

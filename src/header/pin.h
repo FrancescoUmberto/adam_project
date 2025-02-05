@@ -4,7 +4,7 @@
 namespace pin{
     #define ESC_PIN 11
     #define RMP_PIN 8
-
+    #define MICROPHONE_PIN A0
 }
 
 
