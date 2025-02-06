@@ -20,8 +20,8 @@ using namespace microphone;
 String curve_in;
 String code_in;
 String inputString;
-unsigned long startTime;
-
+long startTime;
+bool startTimeCount = false;
 bool flag;
 
 void setup()
@@ -60,6 +60,10 @@ void loop()
     globalData.sendData();
     flag = false;
   }
+  if (currentCode == CODE::START && micros() - startTime > duration * 1000)
+  {
+    currentCode = CODE::STOP;
+  }
 
   if (Serial.available())
   {
@@ -80,7 +84,8 @@ void loop()
       {
         return;
       }
-
+      // replace with a boolean value and take the time only when the code is START and the speed is reached
+      startTimeCount = true;
       startTime = micros();
     }
     else
@@ -93,6 +98,8 @@ void loop()
   {
     processAudioSample();
   }
+;
+  globalSingleSpeedMode.getParams();
 
-  controlEngine();
+  controlEngine(startTime);
 }

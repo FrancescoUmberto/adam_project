@@ -7,7 +7,7 @@
 
 namespace engine{
     extern Servo esc;
-    void controlEngine();
+    void controlEngine(long startTime);
 }
 
 

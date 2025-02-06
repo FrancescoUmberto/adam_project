@@ -36,24 +36,40 @@ namespace mode {
     {
     }
 
-    int SweepMode::getInitialDC()
+    long SweepMode::getInitialDC()
     {
         return initial_dc;
     }
 
     void SweepMode::setInitialDC(int initial_dc)
     {
-        this->initial_dc = initial_dc;
+        if (initial_dc >= 0 && initial_dc <= 100)
+        {
+            this->initial_dc = map(initial_dc, 0, 100, MIN_SPEED, MAX_SPEED);
+        }
+        else
+        {
+            Serial.println("Invalid input! Enter a value between 0 and 100");
+            this->initial_dc = 0;
+        }
     }
 
-    int SweepMode::getFinalDC()
+    long SweepMode::getFinalDC()
     {
         return final_dc;
     }
 
     void SweepMode::setFinalDC(int final_dc)
     {
-        this->final_dc = final_dc;
+        if (final_dc >= 0 && final_dc <= 100)
+        {
+            this->final_dc = map(final_dc, 0, 100, MIN_SPEED, MAX_SPEED);
+        }
+        else
+        {
+            Serial.println("Invalid input! Enter a value between 0 and 100");
+            this->final_dc = 0;
+        }
     }
 
     int SweepMode::getNSteps()
@@ -80,6 +96,7 @@ namespace mode {
     {
         this->curve = stringToCurve(curveStr);
     }
+
 
     void SweepMode::getParams()
     {

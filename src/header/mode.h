@@ -38,10 +38,10 @@ namespace mode
     public:
         SweepMode();
 
-        int getInitialDC();
+        long getInitialDC();
         void setInitialDC(int initial_dc);
 
-        int getFinalDC();
+        long getFinalDC();
         void setFinalDC(int final_dc);
 
         int getNSteps();
@@ -50,12 +50,12 @@ namespace mode
         CURVE getCurve();
         void setCurve(CURVE curve);
         void setCurve(const String& curve);
-
+        void setInitialFinalDC(float initial_dc, float final_dc);
         void getParams();
 
     private:
-        int initial_dc;
-        int final_dc;
+        long initial_dc;
+        long final_dc;
         int n_steps;
         CURVE curve;
     };
