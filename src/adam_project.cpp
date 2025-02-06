@@ -30,23 +30,23 @@ void setup()
   cli();  // Disabilita gli interrupt globali
 
   Serial.begin(250000);
-  Serial.setTimeout(1);
+  Serial.setTimeout(100);
   Serial.println("Inserire il codice di comando: ");
 
-  TCCR1A = 0;
-  TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
+  TCCR3A = 0;
+  TCCR3B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
   
   // OCR1A = (16e6 / (1024 * desiredFrequency)) - 1
-  OCR1A = (16000000UL / (1024UL)) - 1;
+  OCR3A = (16000000UL / (1024UL)) - 1;
   
-  TIMSK1 = (1 << OCIE1A);
+  TIMSK3 = (1 << OCIE1A);
 
   sei(); 
   pinMode(MICROPHONE_PIN, INPUT); // Set the signal pin as input
 
 }
 
-ISR(TIMER1_COMPA_vect) {
+ISR(TIMER3_COMPA_vect) {
   flag = true;
 }
 
