@@ -108,12 +108,12 @@ namespace engine
     startTime = time; // Initialize start time
     if (elapsedTime >= duration)
     {
-      currentSpeed = targetSpeed; // Ensure we reach the target speed at the end
+      currentSpeed = maxSpeed; // Ensure we reach the target speed at the end
       return;
     }
 
     // Linearly interpolate speed based on elapsed time
-    currentSpeed = minSpeed + ((elapsedTime * (targetSpeed - minSpeed)) / duration);
+    currentSpeed = minSpeed + ((elapsedTime * (maxSpeed - minSpeed)) / duration);
 
     esc.writeMicroseconds((int)currentSpeed);
   }
