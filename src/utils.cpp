@@ -3,9 +3,9 @@
 
 namespace utils{
     bool substring(String& original, String& header, String& body) {
-    int separatorIndex = original.indexOf(';');
+    int separatorIndex = original.indexOf(',');
 
-    if ( original.indexOf(';') == -1) {
+    if ( original.indexOf(',') == -1) {
         header = original;
         body = "";
         return false;  

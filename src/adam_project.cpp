@@ -8,7 +8,6 @@
 #include <header/pin.h>
 #include <header/microphone.h>
 
-
 using namespace parser;
 using namespace mode;
 using namespace code_parser;
@@ -27,7 +26,11 @@ bool flag;
 
 void setup()
 {
-  cli();  // Disabilita gli interrupt globali
+  esc.attach(ESC_PIN);         // Attach the ESC to the pin
+  esc.writeMicroseconds(1000); // Initialize ESC with the current speed
+  pinMode(RMP_PIN, INPUT);
+
+  cli(); // Disabilita gli interrupt globali
 
   Serial.begin(250000);
   Serial.setTimeout(100);
@@ -35,25 +38,25 @@ void setup()
 
   TCCR3A = 0;
   TCCR3B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
-  
+
   // OCR1A = (16e6 / (1024 * desiredFrequency)) - 1
   OCR3A = (16000000UL / (1024UL)) - 1;
-  
+
   TIMSK3 = (1 << OCIE1A);
 
-  sei(); 
+  sei();
   pinMode(MICROPHONE_PIN, INPUT); // Set the signal pin as input
-
 }
 
-ISR(TIMER3_COMPA_vect) {
+ISR(TIMER3_COMPA_vect)
+{
   flag = true;
 }
 
-
 void loop()
 {
-  if(flag && currentCode == CODE::START && micros() - startTime <= duration * 1000){
+  if (flag && currentCode == CODE::START && micros() - startTime <= duration * 1000)
+  {
     globalData.sendData();
     flag = false;
   }
@@ -85,10 +88,11 @@ void loop()
       Serial.println("Parsing Error");
     }
   }
-  
-  if(currentCode == CODE::START){
+
+  if (currentCode == CODE::START)
+  {
     processAudioSample();
   }
 
-  //controlEngine();
+  controlEngine();
 }

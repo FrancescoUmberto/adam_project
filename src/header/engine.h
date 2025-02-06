@@ -4,10 +4,9 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-extern Servo esc;
 
 namespace engine{
-
+    extern Servo esc;
     void controlEngine();
 }
 

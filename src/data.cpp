@@ -8,7 +8,7 @@ namespace send_data{
     inline void appendFloat(float value) {
         dtostrf(value, 6, 4, p);
         p += strlen(p);
-        *p++ = ';';
+        *p++ = ',';
     }
 
     Data::Data()

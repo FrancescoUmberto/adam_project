@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "header/mode.h"
+#include "header/pin.h"
 
+using namespace pin;
 namespace mode {
 
     MODE stringToMode(const String& str)
@@ -153,9 +155,30 @@ namespace mode {
         return duty_cycle;
     }
 
+    void SingleSpeedMode::setTargetSpeed(long target_speed)
+    {
+        this->target_speed = target_speed;
+    }
+
+    long SingleSpeedMode::getTargetSpeed()
+    {
+        return target_speed;
+    }
+
+
     void SingleSpeedMode::setDutyCycle(float duty_cycle)
     {
-        this->duty_cycle = duty_cycle;
+
+        if (duty_cycle >= 0 && duty_cycle <= 100)
+        {
+            setTargetSpeed(map(duty_cycle, 0, 100, MIN_SPEED, MAX_SPEED));
+            this->duty_cycle = duty_cycle;
+        }
+        else
+        {
+            Serial.println("Invalid input! Enter a value between 0 and 100");
+            this->duty_cycle = 0;
+        }
     }
 
     void SingleSpeedMode::getParams()

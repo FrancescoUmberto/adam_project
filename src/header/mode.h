@@ -84,11 +84,13 @@ namespace mode
 
         float getDutyCycle();
         void setDutyCycle(float duty_cycle);
-
+        void setTargetSpeed(long target_speed);
+        long getTargetSpeed(); 
         void getParams();
 
     private:
         float duty_cycle;
+        long target_speed;
     };
 
     extern MODE currentMode;
