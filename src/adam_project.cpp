@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SPI.h>
 #include <header/parser.h>
 #include <header/mode.h>
 #include <header/code_parser.h>
@@ -7,6 +8,8 @@
 #include <header/engine.h>
 #include <header/pin.h>
 #include <header/microphone.h>
+#include <header/rpm_sensor.h>
+#include <header/temperature.h>
 
 using namespace parser;
 using namespace mode;
@@ -16,6 +19,8 @@ using namespace send_data;
 using namespace engine;
 using namespace pin;
 using namespace microphone;
+using namespace rpm;
+using namespace temperature;
 
 String curve_in;
 String code_in;
@@ -34,7 +39,6 @@ void setup()
 
   Serial.begin(250000);
   Serial.setTimeout(100);
-  Serial.println("Inserire il codice di comando: ");
 
   TCCR3A = 0;
   TCCR3B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
@@ -45,7 +49,8 @@ void setup()
   TIMSK3 = (1 << OCIE1A);
 
   sei();
-  pinMode(MICROPHONE_PIN, INPUT); // Set the signal pin as input
+  pinMode(MICROPHONE_PIN, INPUT);
+  pinMode(RMP_PIN, INPUT);
 }
 
 ISR(TIMER3_COMPA_vect)
@@ -68,8 +73,7 @@ void loop()
   if (Serial.available())
   {
     inputString = Serial.readStringUntil('\n');
-    Serial.print("Hai inserito: ");
-    Serial.println(inputString);
+    temperature::begin();
 
     if (substring(inputString, code_in, params))
     {
@@ -79,6 +83,8 @@ void loop()
         cli();
         parse_command(params);
         sei();
+        esc.writeMicroseconds(1000);
+        delay(1000);
       }
       else if (currentCode == CODE::STOP)
       {
@@ -97,9 +103,10 @@ void loop()
   if (currentCode == CODE::START)
   {
     processAudioSample();
-  }
-;
-  globalSingleSpeedMode.getParams();
+    processRPMSample();
+    processTemperatureSample();
+  };
+  // globalSingleSpeedMode.getParams();
 
   controlEngine(startTime);
 }

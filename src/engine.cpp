@@ -15,9 +15,9 @@ namespace engine
 {
   Servo esc;
 
-  float targetSpeed = 1000;    // Target speed (in microseconds)
   float interpolationStep = 0.0001; // Speed change per iteration (the smaller, the smoother)
   float currentSpeed = 1000;
+  float currentSpeedSweep = 1000;
   unsigned long lastTime = 0;
   long elapsedTime = 0;
 
@@ -44,16 +44,25 @@ namespace engine
       }
       else if (currentMode == MODE::SWEEP)
       {
-        rampControl(startTime, globalSweepMode.getInitialDC(), globalSweepMode.getFinalDC());
+        if (globalSweepMode.getCurve() == CURVE::RAMP)
+        {
+          rampControl(startTime, globalSweepMode.getInitialDC(), globalSweepMode.getFinalDC());
+        }
       }
       else if (currentMode == MODE::SETPOINT)
       {
-        Serial.println("SETPOINT MODE");
       }
     }
     else if (currentCode == CODE::STOP)
     {
+
       stopEngine();
+      currentSpeed = 1000;
+      currentSpeedSweep = 1000;
+      lastTime = 0;
+      elapsedTime = 0;
+      time = 0;
+      deltaTime = 0;
     }
   }
 
@@ -65,16 +74,17 @@ namespace engine
 
   void stopEngine()
   {
-    accelerationHandling(1000);
+    esc.writeMicroseconds(0);
   }
 
   void accelerationHandling(long targetSpeed)
   {
-    if(lastTime == 0){
+    if (lastTime == 0)
+    {
       lastTime = micros();
       return;
     }
-    
+
     time = micros();
     deltaTime = time - lastTime;
     lastTime = time;
@@ -102,20 +112,19 @@ namespace engine
 
   void rampControl(long startTime, long minSpeed, long maxSpeed)
   {
-
     time = micros();
     elapsedTime = time - startTime;
-    startTime = time; // Initialize start time
-    if (elapsedTime >= duration)
+
+    if (elapsedTime / 1000 >= duration)
     {
-      currentSpeed = maxSpeed; // Ensure we reach the target speed at the end
+      currentSpeedSweep = maxSpeed; // Ensure we reach the target speed at the end
       return;
     }
 
     // Linearly interpolate speed based on elapsed time
-    currentSpeed = minSpeed + ((elapsedTime * (maxSpeed - minSpeed)) / duration);
+    currentSpeedSweep = minSpeed + (((elapsedTime / 1000) * (maxSpeed - minSpeed)) / duration);
 
-    esc.writeMicroseconds((int)currentSpeed);
+    esc.writeMicroseconds((int)currentSpeedSweep);
   }
 
 }

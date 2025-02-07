@@ -18,7 +18,7 @@ namespace send_data{
         buffer[1] = 'A';
         buffer[2] = 'T';
         buffer[3] = 'A';
-        buffer[4] = ';';
+        buffer[4] = ',';
     }
 
     float Data::getCurrent()
