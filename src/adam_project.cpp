@@ -10,6 +10,7 @@
 #include <header/microphone.h>
 #include <header/rpm_sensor.h>
 #include <header/temperature.h>
+#include <header/strain_gauge.h>
 
 using namespace parser;
 using namespace mode;
@@ -21,6 +22,7 @@ using namespace pin;
 using namespace microphone;
 using namespace rpm;
 using namespace temperature;
+using namespace strain_gauge;
 
 String curve_in;
 String code_in;
@@ -73,7 +75,6 @@ void loop()
   if (Serial.available())
   {
     inputString = Serial.readStringUntil('\n');
-    temperature::begin();
 
     if (substring(inputString, code_in, params))
     {
@@ -85,6 +86,8 @@ void loop()
         sei();
         esc.writeMicroseconds(1000);
         delay(1000);
+        temperature::begin();
+        strain_gauge::begin();
       }
       else if (currentCode == CODE::STOP)
       {
@@ -105,6 +108,7 @@ void loop()
     processAudioSample();
     processRPMSample();
     processTemperatureSample();
+    processStrainSample();
   };
   // globalSingleSpeedMode.getParams();
 

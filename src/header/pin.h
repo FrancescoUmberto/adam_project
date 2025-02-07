@@ -8,6 +8,8 @@ namespace pin
 #define MICROPHONE_PIN A0
 #define MIN_SPEED 1000
 #define MAX_SPEED 2000
+#define DATA_PIN 3
+#define CLOCK_PIN 4
 // #define DOUT 2
 // #define CLK 3
 
