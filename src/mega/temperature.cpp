@@ -16,6 +16,7 @@ namespace temperature
 
     void begin()
     {
+
         if (!mlx.begin())
         {
             Serial.println("Error connecting to MLX sensor. Check wiring.");

@@ -40,28 +40,32 @@ void setup()
   cli(); // Disabilita gli interrupt globali
 
   Serial.begin(250000);
+  Serial1.begin(250000);
   Serial.setTimeout(100);
 
-  TCCR3A = 0;
-  TCCR3B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
+  TCCR5A = 0;
+  TCCR5B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
 
   // OCR1A = (16e6 / (1024 * desiredFrequency)) - 1
-  OCR3A = (16000000UL / (1024UL)) - 1;
+  OCR5A = (16000000UL / (1024UL)) - 1;
 
-  TIMSK3 = (1 << OCIE1A);
+  TIMSK5 = (1 << OCIE1A);
 
   sei();
   pinMode(MICROPHONE_PIN, INPUT);
   pinMode(RMP_PIN, INPUT);
 }
 
-ISR(TIMER3_COMPA_vect)
+ISR(TIMER5_COMPA_vect)
 {
   flag = true;
 }
 
 void loop()
 {
+
+  
+
   if (flag && currentCode == CODE::START && micros() - startTime <= duration * 1000)
   {
     globalData.sendData();
@@ -70,6 +74,7 @@ void loop()
   if (currentCode == CODE::START && micros() - startTime > duration * 1000)
   {
     currentCode = CODE::STOP;
+    Serial1.println("STOP");
   }
 
   if (Serial.available())
@@ -87,7 +92,10 @@ void loop()
         esc.writeMicroseconds(1000);
         delay(1000);
         temperature::begin();
-        strain_gauge::begin();
+        // strain_gauge::begin();
+        Serial1.println("START");
+
+
       }
       else if (currentCode == CODE::STOP)
       {

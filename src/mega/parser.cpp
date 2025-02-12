@@ -72,7 +72,7 @@ float sampling_period;
                 // globalSetPsointMode.getParams();
             }
 
-            OCR3A = (16000000UL / (1024UL * sampling_period)) - 1;
+            OCR5A = (16000000UL / (1024UL * sampling_period)) - 1;
 
 ;
         }
