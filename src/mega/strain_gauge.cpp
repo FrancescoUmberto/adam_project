@@ -12,7 +12,7 @@ namespace strain_gauge
     {
         if (Serial1.available() > 0) {
             String msg = Serial1.readStringUntil('\n');     
-            globalData.setThrust(msg.toFloat());
+            globalData.setThrust((-1)*msg.toFloat());
             
         }
     }
