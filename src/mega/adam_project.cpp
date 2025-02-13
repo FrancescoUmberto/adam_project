@@ -74,6 +74,7 @@ void loop()
   if (currentCode == CODE::START && micros() - startTime > duration * 1000)
   {
     currentCode = CODE::STOP;
+    Serial.println("STOP");
     Serial1.println("STOP");
   }
 
