@@ -25,7 +25,7 @@ float sampling_period;
 
             // define DURATION
             substring(params, temp_string, params);
-            duration = (temp_string.toFloat())/1000;
+            duration = (temp_string.toFloat())*1000;
 
             // define SAMPLING_PERIOD
             substring(params, temp_string, params);

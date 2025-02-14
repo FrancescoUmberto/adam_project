@@ -71,11 +71,14 @@ void loop()
     globalData.sendData();
     flag = false;
   }
-  if (currentCode == CODE::START && micros() - startTime > duration * 1000)
+
+  if (currentCode == CODE::START && micros() - startTime > duration * 1000 )
   {
-    currentCode = CODE::STOP;
+    cli();
     Serial.println("STOP");
     Serial1.println("STOP");
+    currentCode = CODE::STOP;
+    sei();
   }
 
   if (Serial.available())
