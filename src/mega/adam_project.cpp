@@ -75,6 +75,7 @@ void loop()
   if (currentCode == CODE::START && micros() - startTime > duration * 1000 )
   {
     cli();
+    esc.detach();
     Serial.println("STOP");
     Serial1.println("STOP");
     currentCode = CODE::STOP;
@@ -90,24 +91,27 @@ void loop()
       currentCode = stringToCode(code_in);
       if (currentCode == CODE::START)
       {
-        cli();
+        cli();   
         parse_command(params);
         sei();
+        esc.attach(ESC_PIN);  
+        delay(2000);
         esc.writeMicroseconds(1000);
         delay(1000);
         temperature::begin();
         // strain_gauge::begin();
         Serial1.println("START");
 
-
+        // replace with a boolean value and take the time only when the code is START and the speed is reached
+        startTimeCount = true;
+        startTime = micros();
       }
       else if (currentCode == CODE::STOP)
       {
+        esc.detach();
         return;
       }
-      // replace with a boolean value and take the time only when the code is START and the speed is reached
-      startTimeCount = true;
-      startTime = micros();
+
     }
     else
     {

@@ -74,7 +74,9 @@ namespace engine
 
   void stopEngine()
   {
-    esc.writeMicroseconds(0);
+    //esc.writeMicroseconds(1000);
+    //accelerationHandling(1000);
+    
   }
 
   void accelerationHandling(long targetSpeed)
