@@ -1,18 +1,21 @@
-#include <HX711_ADC.h>
+#include <HX711.h>
 
 #define DATA_PIN 3
 #define CLOCK_PIN 5
 
-HX711_ADC LoadCell(DATA_PIN, CLOCK_PIN);
+HX711 LoadCell;
 float f;
 bool start = false;
 
 void setup()
 {
   Serial.begin(250000);
-  LoadCell.begin();
-  LoadCell.start(2000);           // Start HX711 and wait for it to stabilize (2 seconds)
-  LoadCell.setCalFactor(1037.61); // Set calibration factor (adjust as needed)
+  LoadCell.begin(DATA_PIN, CLOCK_PIN);
+
+  LoadCell.set_scale(1035.951538);       // TODO you need to calibrate this yourself.
+  LoadCell.set_offset(103738.25);
+  
+  // LoadCell.set_gain(1037.61); // Set calibration factor (adjust as needed)
 }
 
 void loop()
@@ -23,6 +26,7 @@ void loop()
     if (command.indexOf("START") != -1)
     {
       start = true;
+      LoadCell.tare();
     }
     else if (command.indexOf("STOP") != -1)
       start = false;
@@ -30,8 +34,7 @@ void loop()
 
   if (start)
   {
-    LoadCell.update();
-    float weight = LoadCell.getData();
-    Serial.println(weight, 2);
+    f = LoadCell.get_units(2);
+    Serial.println(f, 2);
   }
 }
