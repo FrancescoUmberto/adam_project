@@ -28,6 +28,8 @@ namespace send_data{
         void setNoise(float noise);
 
         void sendData();
+
+        void reset();
     private:
         float current;
         float voltage;

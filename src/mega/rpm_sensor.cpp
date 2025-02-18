@@ -9,7 +9,6 @@ int rpmPin = 8;
 bool rpmLastRead = false;
 
 unsigned long timeLastRead = 0;
-unsigned long lastTime = 0;
 unsigned long timeRead;
 unsigned long deltaTimeRead;
 
@@ -24,6 +23,21 @@ const float EMA_ALPHA = 0.3; // Adjust for desired smoothness (0.1 - slow, 0.5 -
 
 namespace rpm
 {
+    // Flag to check if this is the first edge
+    bool firstEdge = true;
+
+    void setupRPM()
+    {
+        pinMode(RMP_PIN, INPUT);
+
+        // Reset all variables
+        timeLastRead = 0; // Initialize to 0 so we can check for first edge
+        filteredRPM = 0.0;
+        firstEdge = true;
+
+        digitalRead(RMP_PIN);
+    }
+
     void processRPMSample()
     {
         bool rpmRead = digitalRead(RMP_PIN);
@@ -35,23 +49,28 @@ namespace rpm
 
             if (oneCount >= DEBOUNCE_THRESHOLD && !rpmLastRead) {
                 timeRead = micros();
-                deltaTimeRead = timeRead - timeLastRead;
+
+                if (firstEdge) {
+                    // On the first rising edge, just initialize timeLastRead
+                    firstEdge = false;
+                } else {
+                    deltaTimeRead = timeRead - timeLastRead;
+                    // Compute raw RPM; avoid division by zero if deltaTimeRead is unexpectedly 0
+                    if (deltaTimeRead > 0) {
+                        float rawRPM = 60000000.0 / deltaTimeRead;
+                        // Apply EMA filtering
+                        filteredRPM = (EMA_ALPHA * rawRPM) + ((1 - EMA_ALPHA) * filteredRPM);
+                        globalData.setRPM(filteredRPM);
+                    }
+                }
                 timeLastRead = timeRead;
-
-                // Compute raw RPM
-                float rawRPM = 60000000.0 / deltaTimeRead;
-
-                // Apply EMA filtering
-                filteredRPM = (EMA_ALPHA * rawRPM) + ((1 - EMA_ALPHA) * filteredRPM);
-
-                globalData.setRPM(filteredRPM);
             }
         } else {
             zeroCount++;
             oneCount = 0;  // Reset one count when detecting 0
         }
 
-        // Ensure we have a valid edge detection
+        // Update last read state based on debouncing
         if (zeroCount >= DEBOUNCE_THRESHOLD) {
             rpmLastRead = false;
         } else if (oneCount >= DEBOUNCE_THRESHOLD) {

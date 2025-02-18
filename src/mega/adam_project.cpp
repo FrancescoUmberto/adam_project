@@ -63,9 +63,6 @@ ISR(TIMER5_COMPA_vect)
 
 void loop()
 {
-
-  
-
   if (flag && currentCode == CODE::START && micros() - startTime <= duration * 1000)
   {
     globalData.sendData();
@@ -78,6 +75,7 @@ void loop()
     esc.detach();
     Serial.println("STOP");
     Serial1.println("STOP");
+    globalData.reset();
     currentCode = CODE::STOP;
     sei();
   }
@@ -99,6 +97,8 @@ void loop()
         esc.writeMicroseconds(1000);
         delay(1000);
         temperature::begin();
+
+        rpm::setupRPM();
         // strain_gauge::begin();
         Serial1.println("START");
 
@@ -108,6 +108,7 @@ void loop()
       }
       else if (currentCode == CODE::STOP)
       {
+        globalData.reset();
         esc.detach();
         return;
       }

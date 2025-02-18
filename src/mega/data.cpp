@@ -82,22 +82,29 @@ namespace send_data{
     }
 
     void Data::sendData() {
-    p = buffer + 5;
+        p = buffer + 5;
 
-    appendFloat(current);
-    appendFloat(voltage);
-    appendFloat(temperature);
-    appendFloat(rpm);
-    appendFloat(thrust);
+        appendFloat(current);
+        appendFloat(voltage);
+        appendFloat(temperature);
+        appendFloat(rpm);
+        appendFloat(thrust);
 
-    dtostrf(noise, 6, 4, p);
-    // p += strlen(p);
-    // *p = '\0';
+        dtostrf(noise, 6, 4, p);
+        // p += strlen(p);
+        // *p = '\0';
 
-    Serial.println(buffer);
-}
+        Serial.println(buffer);
+    }    
 
-    
+    void Data::reset() {
+        current = 0;
+        voltage = 0;
+        temperature = 0;
+        rpm = 0;
+        thrust = 0;
+        noise = 0;
+    }
 
     Data globalData = Data();
 
