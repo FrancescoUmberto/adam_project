@@ -11,6 +11,8 @@
 #include <header/rpm_sensor.h>
 #include <header/temperature.h>
 #include <header/strain_gauge.h>
+#include <header/ampere.h>
+#include <header/voltage.h>
 
 using namespace parser;
 using namespace mode;
@@ -23,6 +25,8 @@ using namespace microphone;
 using namespace rpm;
 using namespace temperature;
 using namespace strain_gauge;
+using namespace ampere;
+using namespace voltage;
 
 String curve_in;
 String code_in;
@@ -126,6 +130,8 @@ void loop()
     processRPMSample();
     processTemperatureSample();
     processStrainSample();
+    processAmpereSample();
+    processVoltageSample();
   };
   // globalSingleSpeedMode.getParams();
 

@@ -10,6 +10,8 @@ namespace pin
 #define MAX_SPEED 2000
 #define DATA_PIN 3
 #define CLOCK_PIN 4
+#define AMPERE_PIN A10
+#define VOLTAGE_PIN A7
 // #define DOUT 2
 // #define CLK 3
 
