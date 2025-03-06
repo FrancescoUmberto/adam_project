@@ -12,10 +12,9 @@ void setup()
   Serial.begin(250000);
   LoadCell.begin(DATA_PIN, CLOCK_PIN);
 
-  LoadCell.set_scale(1035.951538);       // TODO you need to calibrate this yourself.
+  LoadCell.set_scale(1035.951538);       
   LoadCell.set_offset(103738.25);
   
-  // LoadCell.set_gain(1037.61); // Set calibration factor (adjust as needed)
 }
 
 void loop()

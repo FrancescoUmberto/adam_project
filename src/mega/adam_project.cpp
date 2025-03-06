@@ -37,11 +37,11 @@ bool flag;
 
 void setup()
 {
-  esc.attach(ESC_PIN);         // Attach the ESC to the pin
-  esc.writeMicroseconds(1000); // Initialize ESC with the current speed
+  esc.attach(ESC_PIN);        
+  esc.writeMicroseconds(1000); 
   pinMode(RMP_PIN, INPUT);
 
-  cli(); // Disabilita gli interrupt globali
+  cli(); 
 
   Serial.begin(250000);
   Serial1.begin(250000);
@@ -50,7 +50,6 @@ void setup()
   TCCR5A = 0;
   TCCR5B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
 
-  // OCR1A = (16e6 / (1024 * desiredFrequency)) - 1
   OCR5A = (16000000UL / (1024UL)) - 1;
 
   TIMSK5 = (1 << OCIE1A);
@@ -103,10 +102,9 @@ void loop()
         temperature::begin();
 
         rpm::setupRPM();
-        // strain_gauge::begin();
+        
         Serial1.println("START");
 
-        // replace with a boolean value and take the time only when the code is START and the speed is reached
         startTimeCount = true;
         startTime = micros();
       }
@@ -133,7 +131,6 @@ void loop()
     processAmpereSample();
     processVoltageSample();
   };
-  // globalSingleSpeedMode.getParams();
 
   controlEngine(startTime);
 }

@@ -15,7 +15,7 @@ namespace engine
 {
   Servo esc;
 
-  float interpolationStep = 0.0001; // Speed change per iteration (the smaller, the smoother)
+  float interpolationStep = 0.0001;
   float currentSpeed = 1000;
   float currentSpeedSweep = 1000;
   unsigned long lastTime = 0;
@@ -24,7 +24,6 @@ namespace engine
   long initial_dc;
   long final_dc;
 
-  // Internal
   unsigned long time;
   float deltaTime;
   int readCount = 0;
@@ -91,21 +90,20 @@ namespace engine
     deltaTime = time - lastTime;
     lastTime = time;
 
-    // Smoothly interpolate the speed towards the target speed
     if (currentSpeed < targetSpeed)
     {
-      currentSpeed += interpolationStep * deltaTime; // Increase speed
+      currentSpeed += interpolationStep * deltaTime;
       if (currentSpeed > targetSpeed)
       {
-        currentSpeed = targetSpeed; // Cap at the target speed
+        currentSpeed = targetSpeed;
       }
     }
     else if (currentSpeed > targetSpeed)
     {
-      currentSpeed -= interpolationStep * deltaTime; // Decrease speed
+      currentSpeed -= interpolationStep * deltaTime;
       if (currentSpeed < targetSpeed)
       {
-        currentSpeed = targetSpeed; // Cap at the target speed
+        currentSpeed = targetSpeed; 
       }
     }
 
@@ -119,11 +117,9 @@ namespace engine
 
     if (elapsedTime / 1000 >= duration)
     {
-      currentSpeedSweep = maxSpeed; // Ensure we reach the target speed at the end
+      currentSpeedSweep = maxSpeed; 
       return;
     }
-
-    // Linearly interpolate speed based on elapsed time
     currentSpeedSweep = minSpeed + (((elapsedTime / 1000) * (maxSpeed - minSpeed)) / duration);
 
     esc.writeMicroseconds((int)currentSpeedSweep);

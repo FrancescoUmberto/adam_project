@@ -31,7 +31,7 @@ namespace rpm
         pinMode(RMP_PIN, INPUT);
 
         // Reset all variables
-        timeLastRead = 0; // Initialize to 0 so we can check for first edge
+        timeLastRead = 0;
         filteredRPM = 0.0;
         firstEdge = true;
 
@@ -45,13 +45,12 @@ namespace rpm
         // Fault-tolerant rising edge detection
         if (rpmRead) {
             oneCount++;
-            zeroCount = 0;  // Reset zero count when detecting 1
+            zeroCount = 0;  
 
             if (oneCount >= DEBOUNCE_THRESHOLD && !rpmLastRead) {
                 timeRead = micros();
 
                 if (firstEdge) {
-                    // On the first rising edge, just initialize timeLastRead
                     firstEdge = false;
                 } else {
                     deltaTimeRead = timeRead - timeLastRead;
@@ -67,10 +66,9 @@ namespace rpm
             }
         } else {
             zeroCount++;
-            oneCount = 0;  // Reset one count when detecting 0
+            oneCount = 0;
         }
 
-        // Update last read state based on debouncing
         if (zeroCount >= DEBOUNCE_THRESHOLD) {
             rpmLastRead = false;
         } else if (oneCount >= DEBOUNCE_THRESHOLD) {

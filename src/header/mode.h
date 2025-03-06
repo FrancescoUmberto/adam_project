@@ -5,7 +5,6 @@
 
 namespace mode
 {
-    // Enumerazioni
     enum MODE
     {
         SINGLE,
@@ -99,4 +98,4 @@ namespace mode
     extern SingleSpeedMode globalSingleSpeedMode;
 }
 
-#endif // MODE_H
+#endif

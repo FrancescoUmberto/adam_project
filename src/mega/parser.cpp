@@ -34,8 +34,6 @@ float sampling_period;
             if (mode::currentMode == MODE::SINGLE)
             {
                 globalSingleSpeedMode.setDutyCycle(params.toFloat());
-
-                // globalSingleSpeedMode.getParams();
             }
             else if (mode::currentMode == MODE::SWEEP)
             {
@@ -59,8 +57,6 @@ float sampling_period;
                     globalSweepMode.setNSteps(params.toInt());
 
                 }
-
-                // globalSweepMode.getParams();
             }
             else if (mode::currentMode == MODE::SETPOINT)
             {
@@ -69,7 +65,6 @@ float sampling_period;
 
 
                 globalSetPointMode.setValue(params.toFloat());
-                // globalSetPsointMode.getParams();
             }
 
             OCR5A = (16000000UL / (1024UL * sampling_period)) - 1;

@@ -13,37 +13,31 @@ using namespace pin;
 using namespace send_data;
 
 namespace voltage {
-  const unsigned long sampleInterval = 3;    // Intervallo tra i campioni in millisecondi
-  const unsigned int numSamples = 500;        // Numero di campioni da acquisire
-  unsigned long lastSampleTime = 0;            // Tempo dell'ultimo campione
-  unsigned int sampleCount = 0;                // Contatore dei campioni acquisiti
+  const unsigned long sampleInterval = 3; // Time between samples in milliseconds
+  const unsigned int numSamples = 500; // Number of samples to take for averaging
+  unsigned long lastSampleTime = 0; // Time of the last sample
+  unsigned int sampleCount = 0; // Number of samples taken so far
   float sampleSum = 0.0;  
-  unsigned long currentTime;                     // Somma dei campioni
+  unsigned long currentTime;
 
 void processVoltageSample() {
   currentTime = millis();
-  
-  // Se non sono stati ancora acquisiti tutti i campioni richiesti...
+
   if (sampleCount < numSamples) {
-    // ...verifica che sia trascorso l'intervallo desiderato
     if (currentTime - lastSampleTime >= sampleInterval) {
       lastSampleTime = currentTime;
-      int reading = analogRead(VOLTAGE_PIN);      // Legge il valore dal sensore
-      sampleSum += reading;              // Accumula il campione
+      int reading = analogRead(VOLTAGE_PIN);
+      sampleSum += reading;
       sampleCount++;
 
     }
   } 
-  // Una volta acquisiti tutti i campioni, calcola la media e la corrente
   else {
-    float avgVcs = sampleSum / numSamples;  // Media dei campioni
-    // Oppure, se preferisci utilizzare la formula fornita per il calcolo della corrente:
+    float avgVcs = sampleSum / numSamples; 
     float voltage = (7*avgVcs/133) + 0.2632;
     
-    // Stampa il risultato sul monitor seriale
     globalData.setVoltage(voltage);
     
-    // Resetta le variabili per iniziare una nuova acquisizione
     sampleCount = 0;
     sampleSum = 0.0;
   }
