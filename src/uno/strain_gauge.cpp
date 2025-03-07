@@ -29,6 +29,9 @@ void loop()
     }
     else if (command.indexOf("STOP") != -1)
       start = false;
+      LoadCell.begin(DATA_PIN, CLOCK_PIN);
+      LoadCell.set_scale(1035.951538);       
+      LoadCell.set_offset(103738.25);
   }
 
   if (start)
